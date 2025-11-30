@@ -133,6 +133,29 @@ class MacroApp:
             if not macro_info['keys']:
                 print(f"오류: '{key}' 매크로의 'keys'가 비어있습니다")
                 return False
+            
+            # delays 검증 (선택사항)
+            if 'delays' in macro_info:
+                delays = macro_info['delays']
+                
+                if not isinstance(delays, list):
+                    print(f"오류: '{key}' 매크로의 'delays'는 리스트여야 합니다")
+                    return False
+                
+                if len(delays) != len(macro_info['keys']):
+                    print(f"오류: '{key}' 매크로의 'delays' 개수({len(delays)})가 'keys' 개수({len(macro_info['keys'])})와 다릅니다")
+                    print(f"팁: delays를 지정하지 않으면 기본 딜레이를 사용합니다")
+                    return False
+                
+                # 각 딜레이 값이 숫자인지 확인
+                for i, delay in enumerate(delays):
+                    if not isinstance(delay, (int, float)):
+                        print(f"오류: '{key}' 매크로의 delays[{i}]는 숫자여야 합니다 (현재: {delay})")
+                        return False
+                    
+                    if delay < 0:
+                        print(f"오류: '{key}' 매크로의 delays[{i}]는 0 이상이어야 합니다 (현재: {delay})")
+                        return False
         
         # 타이밍 검증
         if not hasattr(config, 'KEY_PRESS_DURATION'):
