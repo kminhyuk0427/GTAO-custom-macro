@@ -2,35 +2,35 @@ import keyboard
 import time
 import threading
 
-class MacroCore:
-    """매크로 핵심 실행 엔진"""
+class melongCore:
+    """메롱 핵심 실행 엔진"""
     
     def __init__(self):
         self.is_running = False
-        self.current_macro = None
+        self.current_melong = None
         self.stop_signal = threading.Event()
         self.pressed_keys = set()
         self.mode2_events = {}
-        self.macro_enabled = True
-        self.macros = {}
+        self.melong_enabled = True
+        self.melongs = {}
         self.timings = {'press': 0.01, 'release': 0.01, 'sequence': 0.001}
     
-    def configure(self, macros, timings):
-        """매크로 설정 적용"""
-        self.macros = macros
+    def configure(self, melongs, timings):
+        """메롱 설정 적용"""
+        self.melongs = melongs
         self.timings = timings
         
-        for key, info in macros.items():
+        for key, info in melongs.items():
             if info['mode'] == 2:
                 self.mode2_events[key] = threading.Event()
                 self.mode2_events[key].set()
     
-    def toggle_macro(self):
-        """매크로 ON/OFF 토글"""
-        self.macro_enabled = not self.macro_enabled
-        if not self.macro_enabled and self.is_running:
+    def toggle_melong(self):
+        """메롱 ON/OFF 토글"""
+        self.melong_enabled = not self.melong_enabled
+        if not self.melong_enabled and self.is_running:
             self.stop_signal.set()
-        return self.macro_enabled
+        return self.melong_enabled
     
     def execute_key(self, key, delay=None, hold=None):
         """단일 키 입력"""
@@ -46,7 +46,7 @@ class MacroCore:
         
         try:
             for i, key in enumerate(keys):
-                if not self.macro_enabled:
+                if not self.melong_enabled:
                     break
                 self.execute_key(
                     key,
@@ -60,7 +60,7 @@ class MacroCore:
     def run_repeat(self, trigger, keys, delays, holds):
         """모드 1: 연속 반복"""
         try:
-            while not self.stop_signal.is_set() and self.macro_enabled and trigger in self.pressed_keys:
+            while not self.stop_signal.is_set() and self.melong_enabled and trigger in self.pressed_keys:
                 for i, key in enumerate(keys):
                     if trigger not in self.pressed_keys:
                         return
@@ -72,14 +72,14 @@ class MacroCore:
                 time.sleep(self.timings['sequence'])
         finally:
             self.is_running = False
-            self.current_macro = None
+            self.current_melong = None
     
     def start(self, trigger):
-        """매크로 시작"""
-        if not self.macro_enabled or trigger not in self.macros:
+        """메롱 시작"""
+        if not self.melong_enabled or trigger not in self.melongs:
             return False
         
-        info = self.macros[trigger]
+        info = self.melongs[trigger]
         mode = info['mode']
         
         if mode == 0:
@@ -99,13 +99,13 @@ class MacroCore:
             return False
         
         self.is_running = True
-        self.current_macro = trigger
+        self.current_melong = trigger
         self.stop_signal.clear()
         
         threading.Thread(target=self.run_repeat, args=(trigger, keys, delays, holds), daemon=True).start()
         return True
     
     def stop(self, trigger):
-        """매크로 중단"""
-        if self.current_macro == trigger:
+        """메롱 중단"""
+        if self.current_melong == trigger:
             self.stop_signal.set()

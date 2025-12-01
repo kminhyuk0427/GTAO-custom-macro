@@ -4,15 +4,15 @@ import os
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'modules'))
 
-from core import MacroCore
+from core import melongCore
 from handler import EventHandler
 from tray import TrayIcon
 
-class MacroApp:
-    """매크로 애플리케이션"""
+class melongApp:
+    """메롱 애플리케이션"""
     
     def __init__(self):
-        self.core = MacroCore()
+        self.core = melongCore()
         self.handler = None
         self.tray = TrayIcon(self.on_exit)
         self.toggle_key = '`'
@@ -24,7 +24,7 @@ class MacroApp:
     def load_config(self, config):
         """설정 로드"""
         self.core.configure(
-            config.MACROS,
+            config.melongS,
             {
                 'press': config.KEY_PRESS_DURATION,
                 'release': config.KEY_RELEASE_DURATION,
@@ -40,8 +40,8 @@ class MacroApp:
         keyboard.on_press_key(self.toggle_key, self.handler.handle_press, suppress=True)
         keyboard.on_release_key(self.toggle_key, self.handler.handle_release, suppress=True)
         
-        # 매크로 키
-        for key in self.core.macros:
+        # 메롱 키
+        for key in self.core.melongs:
             keyboard.on_press_key(key, self.handler.handle_press, suppress=True)
             keyboard.on_release_key(key, self.handler.handle_release, suppress=True)
     
@@ -49,18 +49,18 @@ class MacroApp:
         """실행"""
         self.tray.run()
         self.setup_hooks()
-        print("GTA 매크로 실행 중")
+        print("GTA5M 실행 중")
         print(f"토글: [{self.toggle_key}] | 종료: 트레이 우클릭")
         keyboard.wait()
     
     def validate_config(self, cfg):
         """설정 검증"""
-        if not hasattr(cfg, 'MACROS') or not isinstance(cfg.MACROS, dict) or not cfg.MACROS:
+        if not hasattr(cfg, 'melongS') or not isinstance(cfg.melongS, dict) or not cfg.melongS:
             return False
         if not hasattr(cfg, 'TOGGLE_KEY') or not isinstance(cfg.TOGGLE_KEY, str):
             return False
         
-        for k, v in cfg.MACROS.items():
+        for k, v in cfg.melongS.items():
             if not isinstance(v, dict) or 'keys' not in v or 'mode' not in v:
                 return False
             if v['mode'] not in [0,1,2]:

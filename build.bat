@@ -2,7 +2,7 @@
 setlocal enabledelayedexpansion
 chcp 65001 > nul
 echo ========================================
-echo GTA 게임 매크로 빌드
+echo GTA5M 빌드
 echo ========================================
 echo.
 
@@ -188,7 +188,7 @@ REM 매니페스트 파일 생성
 echo ^<?xml version="1.0" encoding="UTF-8" standalone="yes"?^>
 echo ^<assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0"^>
 echo   ^<assemblyIdentity version="1.0.0.0" processorArchitecture="*" name="GTA5M" type="win32"/^>
-echo   ^<description^>GTA Game Macro^</description^>
+echo   ^<description^>GTA5M^</description^>
 echo   ^<trustInfo xmlns="urn:schemas-microsoft-com:asm.v3"^>
 echo     ^<security^>
 echo       ^<requestedPrivileges^>

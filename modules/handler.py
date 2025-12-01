@@ -22,13 +22,13 @@ class EventHandler:
         key = self.get_base_key(event)
         
         if key == self.toggle_key:
-            self.core.toggle_macro()
+            self.core.toggle_melong()
             return False
         
-        if not self.core.macro_enabled:
+        if not self.core.melong_enabled:
             return True
         
-        if self.core.macros.get(key):
+        if self.core.melongs.get(key):
             # 이미 차단 중이면 무시
             if key in self.blocked:
                 return False
@@ -36,7 +36,7 @@ class EventHandler:
             self.blocked.add(key)
             
             # mode 2는 추가 중복 방지
-            if self.core.macros[key]['mode'] == 2:
+            if self.core.melongs[key]['mode'] == 2:
                 if key in self.core.mode2_events and not self.core.mode2_events[key].is_set():
                     return False
             
@@ -58,13 +58,13 @@ class EventHandler:
         if key == self.toggle_key:
             return False
         
-        if not self.core.macro_enabled:
+        if not self.core.melong_enabled:
             return True
         
-        if self.core.macros.get(key):
+        if self.core.melongs.get(key):
             self.core.pressed_keys.discard(key)
             
-            mode = self.core.macros[key]['mode']
+            mode = self.core.melongs[key]['mode']
             
             if mode == 1:
                 self.core.stop(key)

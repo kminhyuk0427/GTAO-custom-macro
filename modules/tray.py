@@ -44,9 +44,9 @@ class TrayIcon:
         self.icon = Icon(
             "GTA5M",
             self.load_icon_image(),
-            "GTA 매크로",
+            "GTA5M",
             Menu(
-                MenuItem('GTA 매크로', lambda: None, enabled=False),
+                MenuItem('GTA5M', lambda: None, enabled=False),
                 MenuItem('종료', self.on_quit)
             )
         )
