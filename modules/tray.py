@@ -42,7 +42,7 @@ class TrayIcon:
     def run(self):
         """실행"""
         self.icon = Icon(
-            "GameMacro",
+            "GTA5M",
             self.load_icon_image(),
             "GTA 매크로",
             Menu(
