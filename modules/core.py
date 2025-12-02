@@ -52,7 +52,8 @@ class macroCore:
     """매크로 코어"""
     __slots__ = ('is_running', 'current_macro', 'stop_signal', 'pressed_keys', 
                  'mode2_events', 'macro_enabled', 'macros', 'timings', 
-                 '_extra', '_input_cache', 'user_trigger_keys', 'macro_executing')
+                 '_extra', '_input_cache', 'user_trigger_keys', 'macro_executing',
+                 'currently_executing_keys')
     
     def __init__(self):
         self.is_running = False
@@ -71,6 +72,9 @@ class macroCore:
         
         # 매크로 실행 중 플래그
         self.macro_executing = threading.Lock()
+        
+        # ★ 매크로가 실행 중인 키들 (트리거 차단용, execute_key에서 개별 관리)
+        self.currently_executing_keys = set()
     
     def configure(self, macros, timings):
         self.macros = macros
@@ -113,13 +117,26 @@ class macroCore:
         scan_code = SCANCODE_MAP[key_lower]
         is_extended = key_lower in EXTENDED_KEYS
         
+        # ★ 이 키가 매크로 트리거라면 실행 전에 차단 목록에 추가
+        is_macro_trigger = key_lower in self.macros
+        if is_macro_trigger:
+            self.currently_executing_keys.add(key_lower)
+        
         # 키 누르기
         self._send_input(scan_code, is_extended, False)
         time.sleep(hold if hold is not None else self.timings['press'])
         
-        # 키 떼기 (Extended Key는 KEYUP에도 플래그 필요)
+        # 키 떼기
         self._send_input(scan_code, is_extended, True)
         time.sleep(delay if delay is not None else self.timings['release'])
+        
+        # ★ 매크로 트리거는 충분한 시간 후 차단 해제 (0.15초)
+        # 이렇게 하면 DirectInput 키 입력이 다시 트리거를 발생시키지 않음
+        if is_macro_trigger:
+            def delayed_remove():
+                time.sleep(0.15)
+                self.currently_executing_keys.discard(key_lower)
+            threading.Thread(target=delayed_remove, daemon=True).start()
     
     def run_once(self, trigger, keys, delays, holds):
         """모드 2: 1회 실행"""
@@ -189,3 +206,7 @@ class macroCore:
         """매크로 중단"""
         if self.current_macro == trigger:
             self.stop_signal.set()
+    
+    def should_block_trigger(self, key):
+        """해당 키가 매크로 트리거로 동작하는 것을 차단해야 하는지 확인"""
+        return key in self.currently_executing_keys

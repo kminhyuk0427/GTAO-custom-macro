@@ -3,7 +3,7 @@ setlocal enabledelayedexpansion
 chcp 65001 > nul
 
 echo ========================================
-echo GThey5M Build
+echo KeyM Build
 echo ========================================
 echo.
 
@@ -187,8 +187,8 @@ REM Create manifest file
 (
 echo ^<?xml version="1.0" encoding="UTF-8" standalone="yes"?^>
 echo ^<assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0"^>
-echo   ^<assemblyIdentity version="1.8.0.0" processorArchitecture="*" name="GThey5M" type="win32"/^>
-echo   ^<description^>GThey5M - Macro Chain Prevention^</description^>
+echo   ^<assemblyIdentity version="1.8.0.0" processorArchitecture="*" name="KeyM" type="win32"/^>
+echo   ^<description^>KeyM - Macro Chain Prevention^</description^>
 echo   ^<trustInfo xmlns="urn:schemas-microsoft-com:asm.v3"^>
 echo     ^<security^>
 echo       ^<requestedPrivileges^>
@@ -197,7 +197,7 @@ echo       ^</requestedPrivileges^>
 echo     ^</security^>
 echo   ^</trustInfo^>
 echo ^</assembly^>
-) > GThey5M.manifest
+) > KeyM.manifest
 
 REM ========================================
 REM Step 5: Clean Previous Build
@@ -209,8 +209,8 @@ if exist build (
 if exist dist (
     rmdir /s /q dist >nul 2>&1
 )
-if exist GThey5M.spec (
-    del GThey5M.spec >nul 2>&1
+if exist KeyM.spec (
+    del KeyM.spec >nul 2>&1
 )
 echo [OK] Cleanup complete
 echo.
@@ -221,15 +221,13 @@ REM ========================================
 echo [6/6] Starting build (1-2 minutes)
 echo.
 echo Building... Please wait.
-echo - Macro chain prevention enabled
-echo - GTA5 optimization applied
 echo.
 
 REM Execute build
 if exist icon.ico (
-    %PYTHON% -m PyInstaller --onefile --noconsole --name=GThey5M --manifest=GThey5M.manifest --uac-admin --clean --noconfirm --hidden-import=keyboard --hidden-import=pystray --hidden-import=PIL --hidden-import=PIL.Image --hidden-import=PIL.ImageDraw --add-data "config.py;." --add-data "modules;modules" --add-data "icon.ico;." --icon=icon.ico main.py >build_log.txt 2>&1
+    %PYTHON% -m PyInstaller --onefile --noconsole --name=KeyM --manifest=KeyM.manifest --uac-admin --clean --noconfirm --hidden-import=keyboard --hidden-import=pystray --hidden-import=PIL --hidden-import=PIL.Image --hidden-import=PIL.ImageDraw --add-data "config.py;." --add-data "modules;modules" --add-data "icon.ico;." --icon=icon.ico main.py >build_log.txt 2>&1
 ) else (
-    %PYTHON% -m PyInstaller --onefile --noconsole --name=GThey5M --manifest=GThey5M.manifest --uac-admin --clean --noconfirm --hidden-import=keyboard --hidden-import=pystray --hidden-import=PIL --hidden-import=PIL.Image --hidden-import=PIL.ImageDraw --add-data "config.py;." --add-data "modules;modules" main.py >build_log.txt 2>&1
+    %PYTHON% -m PyInstaller --onefile --noconsole --name=KeyM --manifest=KeyM.manifest --uac-admin --clean --noconfirm --hidden-import=keyboard --hidden-import=pystray --hidden-import=PIL --hidden-import=PIL.Image --hidden-import=PIL.ImageDraw --add-data "config.py;." --add-data "modules;modules" main.py >build_log.txt 2>&1
 )
 
 if %errorlevel% neq 0 (
@@ -273,32 +271,23 @@ echo ========================================
 REM ========================================
 REM Check Build Result
 REM ========================================
-if exist dist\GThey5M.exe (
+if exist dist\KeyM.exe (
     echo.
     echo [OK] Executable created successfully!
     echo.
     
     REM Copy to desktop
     set DESKTOP=%USERPROFILE%\Desktop
-    copy /Y dist\GThey5M.exe "!DESKTOP!\GThey5M.exe" >nul 2>&1
+    copy /Y dist\KeyM.exe "!DESKTOP!\KeyM.exe" >nul 2>&1
     
-    if exist "!DESKTOP!\GThey5M.exe" (
+    if exist "!DESKTOP!\KeyM.exe" (
         echo [OK] Copied to desktop!
-        echo      Location: !DESKTOP!\GThey5M.exe
+        echo      Location: !DESKTOP!\KeyM.exe
     ) else (
         echo [WARN] Desktop copy failed
-        echo        Manual copy: dist\GThey5M.exe
+        echo        Manual copy: dist\KeyM.exe
     )
     
-    echo.
-    echo ========================================
-    echo New Features:
-    echo ========================================
-    echo [+] Macro chain trigger prevention
-    echo [+] Enhanced GTA5 compatibility
-    echo [+] Improved timing optimization
-    echo [+] Race condition prevention
-    echo ========================================
     echo.
     echo ========================================
     echo Important Notes:
@@ -312,7 +301,7 @@ if exist dist\GThey5M.exe (
 ) else (
     echo.
     echo (Ignorable warning)
-    echo [WARN] dist\GThey5M.exe not created
+    echo [WARN] dist\KeyM.exe not created
     echo.
     echo ========================================
     echo Solutions:

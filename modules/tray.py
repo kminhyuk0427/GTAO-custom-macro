@@ -40,7 +40,7 @@ class TrayIcon:
     
     def run(self):
         """트레이 아이콘 실행"""
-        self.icon = Icon("GThey5M", self.load_icon_image(), "GThey5M", 
-                        Menu(MenuItem('GThey5M', lambda: None, enabled=False), 
+        self.icon = Icon("KeyM", self.load_icon_image(), "KeyM", 
+                        Menu(MenuItem('KeyM', lambda: None, enabled=False), 
                              MenuItem('종료', self.on_quit)))
         threading.Thread(target=self.icon.run, daemon=True).start()

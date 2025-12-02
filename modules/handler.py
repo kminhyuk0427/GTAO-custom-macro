@@ -11,10 +11,15 @@ class EventHandler:
         self.toggle_key = toggle_key
         self.blocked = set()
         
-        # Shift 맵
+        # Shift 맵 (특수문자 + 알파벳 대문자)
         self.shift_map = {
             '!': '1', '@': '2', '#': '3', '$': '4', '%': '5', '^': '6', 
-            '&': '7', '*': '8', '(': '9', ')': '0', '~': '`'
+            '&': '7', '*': '8', '(': '9', ')': '0', '~': '`',
+            'A': 'a', 'B': 'b', 'C': 'c', 'D': 'd', 'E': 'e', 'F': 'f',
+            'G': 'g', 'H': 'h', 'I': 'i', 'J': 'j', 'K': 'k', 'L': 'l',
+            'M': 'm', 'N': 'n', 'O': 'o', 'P': 'p', 'Q': 'q', 'R': 'r',
+            'S': 's', 'T': 't', 'U': 'u', 'V': 'v', 'W': 'w', 'X': 'x',
+            'Y': 'y', 'Z': 'z'
         }
     
     def get_base_key(self, event):
@@ -38,11 +43,16 @@ class EventHandler:
         if key not in self.core.macros:
             return True
         
+        # ★ 핵심: 다른 매크로가 이 키를 실행 중이면
+        # 매크로 트리거는 차단하되, 키 입력은 통과시킴!
+        if self.core.should_block_trigger(key):
+            return True  # 키는 통과! 트리거만 차단
+        
         # 이미 차단 중이면 무시
         if key in self.blocked:
             return False
         
-        # 핵심 수정: 사용자가 직접 누른 경우만 체크
+        # 사용자가 직접 누른 경우만 체크
         if key in self.core.user_trigger_keys:
             return False
         
@@ -82,6 +92,10 @@ class EventHandler:
         # 매크로 키 아니면 통과
         if key not in self.core.macros:
             return True
+        
+        # ★ 다른 매크로가 이 키를 실행 중이면 release도 통과
+        if self.core.should_block_trigger(key):
+            return True  # 키는 통과! 트리거만 차단
         
         # 사용자가 직접 누른 키만 처리
         if key not in self.core.user_trigger_keys:

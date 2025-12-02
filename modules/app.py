@@ -48,7 +48,7 @@ class macroApp:
         self.tray.run()
         self.setup_hooks()
         print("=" * 60)
-        print("GThey5M 실행 중")
+        print("KeyM 실행 중")
         print("=" * 60)
         print(f"토글 키: [{self.toggle_key}]")
         print(f"등록된 매크로: {len(self.core.macros)}개")

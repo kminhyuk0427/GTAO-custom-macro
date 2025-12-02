@@ -64,24 +64,19 @@ MACROS = {
 ##  종료하는 법
 -  작업표시줄 숨김 아이콘에 매크로 있을꺼임, 우클릭 -> 종료
 
-'
-
-'
-
-'
-
-참고 프로젝트:
+##  참고:
 https://github.com/JU5TDIE/Lester-Ver2.0
+https://learn.microsoft.com/en-us/previous-versions/windows/desktop/bb321074(v=vs.85)
+https://gist.github.com/tracend/912308
+https://stackoverflow.com/questions/43988871/convert-directinput-codes-into-keycodes-net
 
 
 
 
-ver - 1.8
+ver - 1.9
 
 수정사항
-1. utf-8 빌드파일 한글 문제 수정
-2. 인게임 특수키 입력 및 동작하지 않는 문제 수정
-3. 그타 호환성 강화 및 안정성 개선
+1. 매크로끼리 동작이 겹치는 문제 수정
+2. 대소문자 shift호환 수정
 
-(현재 문제 상황- 매크로끼리 중복됨, "t", "T"호환안됨)
-+ (추가 고려사항 - 그타 아이콘 누르면 같이 실행, 창 최소화 하면 일시정지, 재빌드시 실행중이던 프로그램 종료, 속도향상, 메모리 최소화, 모두 영어로 전환, 프로그램 간소화, 커스텀 가이드 강화, 빌드 가이드 강화, GTA전용에서 통합 매크로 프로그램으로 전환, 커스텀 기능 세부화, 프로그램 강제 종료키 설정, 매크로 템플릿 추가, 커스텀 방법이 불편하여 직관적이도록 변경, 반복동작 모드에서 트리거키가 입력되는 문제 수정)
+나머지 편의 기능 추가 예정
