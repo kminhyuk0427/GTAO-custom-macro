@@ -74,6 +74,13 @@ MACROS = {
 ##  참고:
 
 https://github.com/JU5TDIE/Lester-Ver2.0
+
 https://learn.microsoft.com/en-us/previous-versions/windows/desktop/bb321074(v=vs.85)
+
 https://gist.github.com/tracend/912308
+
+https://github.com/LOUDO56/PyMacroRecord
+
 https://stackoverflow.com/questions/43988871/convert-directinput-codes-into-keycodes-net
+
+https://github.com/lihaoyi/macropy
