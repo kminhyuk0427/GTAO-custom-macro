@@ -53,7 +53,7 @@ class macroCore:
     __slots__ = ('is_running', 'current_macro', 'stop_signal', 'pressed_keys', 
                  'mode2_events', 'macro_enabled', 'macros', 'timings', 
                  '_extra', '_input_cache', 'user_trigger_keys', 'macro_executing',
-                 'currently_executing_keys')
+                 'currently_executing_keys', 'active_trigger_keys')
     
     def __init__(self):
         self.is_running = False
@@ -73,8 +73,11 @@ class macroCore:
         # 매크로 실행 중 플래그
         self.macro_executing = threading.Lock()
         
-        # ★ 매크로가 실행 중인 키들 (트리거 차단용, execute_key에서 개별 관리)
+        # 매크로가 실행 중인 키들 (트리거 차단용, execute_key에서 개별 관리)
         self.currently_executing_keys = set()
+        
+        # ★ 현재 활성화된 트리거 키들 (각 매크로 스레드가 어떤 트리거로 시작됐는지 추적)
+        self.active_trigger_keys = {}  # {thread_id: trigger_key}
     
     def configure(self, macros, timings):
         self.macros = macros
@@ -107,36 +110,95 @@ class macroCore:
         
         SendInput(1, ctypes.pointer(self._input_cache[cache_key]), ctypes.sizeof(Input))
     
-    def execute_key(self, key, delay=None, hold=None):
-        """단일 키 실행"""
+    def _interruptible_sleep(self, duration, trigger_key, check_interval=0.01):
+        """중단 가능한 sleep 함수
+        
+        Args:
+            duration: 총 대기 시간
+            trigger_key: 현재 매크로의 트리거 키
+            check_interval: 중단 체크 간격 (0.01초 = 10ms)
+        
+        Returns:
+            bool: 정상 완료 시 True, 중단 시 False
+        """
+        elapsed = 0
+        while elapsed < duration:
+            # 트리거 키가 떼어졌는지 확인
+            if trigger_key not in self.pressed_keys:
+                return False
+            # 매크로가 비활성화되었는지 확인
+            if not self.macro_enabled:
+                return False
+            
+            sleep_time = min(check_interval, duration - elapsed)
+            time.sleep(sleep_time)
+            elapsed += sleep_time
+        return True
+    
+    def execute_key(self, key, trigger_key, delay=None, hold=None):
+        """단일 키 실행
+        
+        Args:
+            key: 실행할 키
+            trigger_key: 이 매크로를 시작한 트리거 키
+            delay: 키를 뗀 후 대기 시간
+            hold: 키를 누르고 있는 시간
+        """
         key_lower = key.lower()
         
         if key_lower not in SCANCODE_MAP:
-            return
+            return True  # 알 수 없는 키는 무시
+        
+        # ★ 트리거 키가 매크로 동작 키에 포함된 경우 건너뛰기
+        if key_lower == trigger_key:
+            # delay만 적용하고 키는 실행하지 않음
+            if delay is not None and delay > 0:
+                return self._interruptible_sleep(delay, trigger_key)
+            return True
         
         scan_code = SCANCODE_MAP[key_lower]
         is_extended = key_lower in EXTENDED_KEYS
         
-        # ★ 이 키가 매크로 트리거라면 실행 전에 차단 목록에 추가
+        # 이 키가 매크로 트리거라면 실행 전에 차단 목록에 추가
         is_macro_trigger = key_lower in self.macros
         if is_macro_trigger:
             self.currently_executing_keys.add(key_lower)
         
         # 키 누르기
         self._send_input(scan_code, is_extended, False)
-        time.sleep(hold if hold is not None else self.timings['press'])
+        
+        # hold 시간 동안 대기 (중단 가능)
+        hold_duration = hold if hold is not None else self.timings['press']
+        if not self._interruptible_sleep(hold_duration, trigger_key):
+            # 중단되면 키를 떼고 종료
+            self._send_input(scan_code, is_extended, True)
+            if is_macro_trigger:
+                self._delayed_remove_from_executing(key_lower)
+            return False
         
         # 키 떼기
         self._send_input(scan_code, is_extended, True)
-        time.sleep(delay if delay is not None else self.timings['release'])
         
-        # ★ 매크로 트리거는 충분한 시간 후 차단 해제 (0.15초)
-        # 이렇게 하면 DirectInput 키 입력이 다시 트리거를 발생시키지 않음
+        # delay 시간 동안 대기 (중단 가능)
+        delay_duration = delay if delay is not None else self.timings['release']
+        if delay_duration > 0:
+            if not self._interruptible_sleep(delay_duration, trigger_key):
+                if is_macro_trigger:
+                    self._delayed_remove_from_executing(key_lower)
+                return False
+        
+        # 매크로 트리거는 충분한 시간 후 차단 해제 (0.15초)
         if is_macro_trigger:
-            def delayed_remove():
-                time.sleep(0.15)
-                self.currently_executing_keys.discard(key_lower)
-            threading.Thread(target=delayed_remove, daemon=True).start()
+            self._delayed_remove_from_executing(key_lower)
+        
+        return True
+    
+    def _delayed_remove_from_executing(self, key):
+        """매크로 트리거 키를 지연 후 차단 목록에서 제거"""
+        def delayed_remove():
+            time.sleep(0.15)
+            self.currently_executing_keys.discard(key)
+        threading.Thread(target=delayed_remove, daemon=True).start()
     
     def run_once(self, trigger, keys, delays, holds):
         """모드 2: 1회 실행"""
@@ -146,10 +208,18 @@ class macroCore:
         
         try:
             for i, key in enumerate(keys):
-                if not self.macro_enabled:
+                if not self.macro_enabled or trigger not in self.pressed_keys:
                     break
-                self.execute_key(key, delays[i] if delays else None, 
-                               holds[i] if holds else None)
+                
+                success = self.execute_key(
+                    key, 
+                    trigger,
+                    delays[i] if delays else None, 
+                    holds[i] if holds else None
+                )
+                
+                if not success:  # 중단됨
+                    break
         finally:
             if event:
                 event.set()
@@ -159,12 +229,25 @@ class macroCore:
         try:
             while (not self.stop_signal.is_set() and self.macro_enabled and 
                    trigger in self.pressed_keys):
+                
                 for i, key in enumerate(keys):
+                    # 매 키마다 트리거가 여전히 눌려있는지 확인
                     if trigger not in self.pressed_keys:
                         return
-                    self.execute_key(key, delays[i] if delays else None, 
-                                   holds[i] if holds else None)
-                time.sleep(self.timings['sequence'])
+                    
+                    success = self.execute_key(
+                        key,
+                        trigger,
+                        delays[i] if delays else None,
+                        holds[i] if holds else None
+                    )
+                    
+                    if not success:  # 중단됨
+                        return
+                
+                # 시퀀스 간 딜레이 (중단 가능)
+                if not self._interruptible_sleep(self.timings['sequence'], trigger):
+                    return
         finally:
             self.is_running = False
             self.current_macro = None
