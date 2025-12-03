@@ -1,4 +1,4 @@
-#  Custom Macros
+#  Custom Macros v2.0.3
 
 ##  특징
 
@@ -77,14 +77,3 @@ https://github.com/JU5TDIE/Lester-Ver2.0
 https://learn.microsoft.com/en-us/previous-versions/windows/desktop/bb321074(v=vs.85)
 https://gist.github.com/tracend/912308
 https://stackoverflow.com/questions/43988871/convert-directinput-codes-into-keycodes-net
-
-
-
-
-ver - 1.9
-
-수정사항
-1. 매크로끼리 동작이 겹치는 문제 수정
-2. 대소문자 shift호환 수정
-
-나머지 편의 기능 추가 예정
