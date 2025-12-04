@@ -39,21 +39,21 @@
 #
 # ========================================
 
-
-MACROS = {
-    
+# 테스트 사이트
+# https://keyboard-test.space/kor/
+MACROS = {    
     # 불샥 매크로
     '5': {
         'actions': [
-            ('m', 0.02),
-            ('enter', 0.02),
-            ('down', 0.02),
-            ('down', 0.02),
-            ('down', 0.02),
-            ('down', 0.02),
-            ('enter', 0.02),
-            ('down', 0.02),
-            ('enter', 0.02),
+            ('m',),
+            ('enter',),
+            ('down',),
+            ('down',),
+            ('down',),
+            ('down',),
+            ('enter',),
+            ('down',),
+            ('enter',),
             ('m',),
         ],
         'mode': 2
@@ -62,17 +62,17 @@ MACROS = {
     # 방탄복 매크로
     '6': {
         'actions': [
-            ('m', 0.02),
-            ('enter', 0.02),
-            ('down', 0.02),
-            ('down', 0.02),
-            ('down', 0.02),
-            ('down', 0.02),
-            ('enter', 0.02),
-            ('down', 0.02),
-            ('down', 0.02),
-            ('down', 0.02),
-            ('enter', 0.02),
+            ('m',),
+            ('enter',),
+            ('down',),
+            ('down',),
+            ('down',),
+            ('down',),
+            ('enter',),
+            ('down',),
+            ('down',),
+            ('down',),
+            ('enter',),
             ('m',),
         ],
         'mode': 2
@@ -81,19 +81,19 @@ MACROS = {
     # 탄약 구매
     ('f2', 'f3'): {
         'actions': [
-            ('0', 0.02),
-            ('m', 0.02),
-            ('down', 0.02),
-            ('down', 0.02),
-            ('down', 0.02),
-            ('down', 0.02),
+            ('0',),
+            ('m',),
+            ('down',),
+            ('down',),
+            ('down',),
+            ('down',),
             ('enter', 0.07),
             ('enter', 0.07),
-            ('left', 0.02),
-            ('down', 0.02),
-            ('enter', 0.02),
-            ('m', 0.02),
-            ('tab', 0.02),
+            ('left',),
+            ('down',),
+            ('enter',),
+            ('m',),
+            ('tab',),
             ('tab',),
         ],
         'mode': 2
@@ -115,4 +115,4 @@ FORCE_QUIT_KEYS = ['alt', 'shift', 'delete']
 # 기본 타이밍 (초)
 KEY_PRESS_DURATION = 0.02    # 키 홀드 시간
 KEY_RELEASE_DURATION = 0.02  # 키 간 딜레이
-SEQUENCE_DELAY = 0        # mode 1 루프 간격
+SEQUENCE_DELAY = 0.02        # mode 1 루프 간격

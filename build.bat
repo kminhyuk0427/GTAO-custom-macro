@@ -15,20 +15,20 @@ tasklist /FI "IMAGENAME eq KeyM.exe" 2>NUL | find /I /N "KeyM.exe">NUL
 if "%ERRORLEVEL%"=="0" (
     echo.
     echo ========================================
-    echo [STOP] KeyM.exe is Currently Running
+    echo [STOP] KeyM.exe is Running
     echo ========================================
     echo.
     echo Please close KeyM before building:
     echo.
-    echo Method 1: Force Quit Key
-    echo    - Press ALT + SHIFT + DEL simultaneously
+    echo Method 1: Quit Key
+    echo    - ALT + SHIFT + DEL
     echo.
     echo Method 2: System Tray
     echo    - Right-click KeyM icon in tray
-    echo    - Select "Exit" or similar option
+    echo    - Select "Exit"
     echo.
     echo Method 3: Task Manager
-    echo    - Press Ctrl + Shift + Esc
+    echo    - Ctrl + Shift + Esc
     echo    - Find "KeyM.exe"
     echo    - Click "End Task"
     echo.
