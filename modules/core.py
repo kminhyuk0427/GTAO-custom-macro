@@ -153,7 +153,7 @@ class MacroCore:
         while time.perf_counter() < end_time:
             if trigger_key not in self.pressed_keys or not self.macro_enabled:
                 return False
-            time.sleep(0.005)
+            time.sleep(0.001)
         return True
     
     def _execute_key(self, key, trigger_key, hold, delay, mode):
