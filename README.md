@@ -45,15 +45,14 @@ pip install -r requirements.txt
 
 ### 기본 예시
 ```python
-MACROS = {
-    'k': { 
-        'actions': [
-            ('1',),
-            ('2',),
-        ],
-        'mode': 2
-    },
-}
+'k': { 
+    'actions': [
+        ('1',),
+        ('2',),
+    ],
+    'mode': 2
+},
+
 ```
 
 ### 홀드키 예시
@@ -85,7 +84,7 @@ MACROS = {
 ```python
 ('h', 'i'): { 
     'actions': [
-        ('a', 1),
+        ('a',),
         ('b',),
     ],
     'mode': 2
